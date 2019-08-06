@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.time.Year;
 
 @Entity
-@Table(name="book")
+@Table(name = "book")
 @NoArgsConstructor
 @Data
 public class Book implements Serializable {
@@ -16,10 +16,10 @@ public class Book implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name",nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "pages",nullable = false)
+    @Column(name = "pages", nullable = false)
     private Integer pagesCount;
 
     @Column
@@ -28,11 +28,11 @@ public class Book implements Serializable {
     @Column
     private String booking;
 
-    @ManyToOne(fetch = FetchType.EAGER,optional = false)
-    @JoinColumn(name = "author_id",nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 
-    @Column(name = "genre",nullable = false)
+    @Column(name = "genre", nullable = false)
     @Enumerated(EnumType.STRING)
     private GenreEnum genre;
 }
