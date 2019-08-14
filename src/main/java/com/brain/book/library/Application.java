@@ -16,15 +16,32 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Создаём класс для запуска приложения
+ *
+ * @author Shakhov Yevhen
+ */
 @SpringBootApplication
 public class Application {
+    /**
+     * Делаем автосвязывание с нашим сервисом.
+     */
     @Autowired
     private BookLibraryService bookLibraryService;
 
+    /**
+     * Создаём метод main, в котором запускаем наше приложение
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         SpringApplication.run( Application.class, args );
     }
 
+    /**
+     * Создаём метод run,в котором описываем все наши методы работы приложения.Этот метода помечаем аннотацией
+     * EventListener для того чтобы запускался вместе с запуском приложения.
+     */
     @EventListener(ApplicationReadyEvent.class)
     public void run() {
         addTestNovel();
@@ -34,6 +51,9 @@ public class Application {
         printFilteredBooks();
     }
 
+    /**
+     * Создаём метод addTestNovel, в котором будет создаваться новая книга и автор
+     */
     private void addTestNovel() {
         Book book = new Book();
         book.setBooking( "магазин на Маяке" );
@@ -47,10 +67,13 @@ public class Application {
         author.setSecondName( "Иософич" );
         author.setLastName( "Фуражкин" );
         author.setBirthDate( LocalDate.of( 1985, 5, 15 ) );
-        book.setAuthor( author );
-        bookLibraryService.addNewBook( book );
+        book.setAuthor( author );   //сохраняем автора книги
+        bookLibraryService.addNewBook( book );   //добавляем нашу книгу
     }
 
+    /**
+     * Создаём метод addTestFantasy, в котором будет создаваться новая книга и автор
+     */
     private void addTestFantasy() {
         Book book = new Book();
         book.setBooking( "в переходе на рынке" );
@@ -59,12 +82,16 @@ public class Application {
         book.setReleaseDate( Year.of( 2017 ) );
         book.setGenre( GenreEnum.FANTASY );
 
-        Author author = bookLibraryService
+        Author author = bookLibraryService   // тут мы не будем создавать нового автора для этой книги.А с помощью
+                // метода findAuthorByFullName найдем автора по Ф.И.О. и присвоим его к этой книге
                 .findAuthorByFullName( "Бармалей", "Иософич", "Фуражкин" );
-        book.setAuthor( author );
-        bookLibraryService.addNewBook( book );
+        book.setAuthor( author );  //сохраяняем автора книги
+        bookLibraryService.addNewBook( book );   //добавляем нашу книгу
     }
 
+    /**
+     * Создаём метод addTestHumor, в котором будет создаваться новая книга и автор
+     */
     private void addTestHumor() {
         Book book = new Book();
         book.setBooking( "в переходе на рынке" );
@@ -76,24 +103,34 @@ public class Application {
         Author author = new Author();
         author.setName( "Евгений" );
         author.setSecondName( "Ваганович" );
-        author.setLastName( "Петрович" );
+        author.setLastName( "Петросян" );
         author.setBirthDate( LocalDate.of( 1962, 2, 24 ) );
         book.setAuthor( author );
         bookLibraryService.addNewBook( book );
     }
 
+    /**
+     * Создаём метод printAuthorBooks,который будет нам выводить нам книги по поиску автора.Для этого применяем наш
+     * метод findBooksByAuthor,который был описан в BookRepository.
+     */
     private void printAuthorBooks() {
         List<Book> books = bookLibraryService
                 .findBooksByAuthor( "Бармалей", "Иософич", "Фуражкин" );
-        books.forEach( System.out::println );
+        books.forEach( System.out::println ); //Применяя лямбду с помощью цикла выводим книги.
     }
-    private void printFilteredBooks(){
-        Set<GenreEnum> genres = new HashSet<>();
+
+    /**
+     * Создаём метод printFilteredBooks, который будет фильтровать нам книги по заданным жанрам и выводить на экран
+     */
+    private void printFilteredBooks() {
+        Set<GenreEnum> genres = new HashSet<>(); //Создаём список,в который добавим жанры книг по которым будем
+        // фильтровать книги
         genres.add( GenreEnum.HUMOR );
         genres.add( GenreEnum.NOVEL );
 
-        List<Book> books = bookLibraryService
+        List<Book> books = bookLibraryService //Обращаемся к нашему сервису, в котором при помощи метода
+                // findBooksByGenres будем искать наши книги по жанрам
                 .findBooksByGenres( genres );
-        books.forEach( System.out::println );
+        books.forEach( System.out::println );   //Применяя лямбду с помощью цикла выводим книги.
     }
 }
